@@ -1,8 +1,9 @@
+import type { Profile } from './types';
+
 /** Author identity shown in the home header. */
-export const profile = {
-  name: "Cristhian Cruz Delgado",
-  university: "Universidad de La Laguna",
-  /** Placeholder until the author supplies the degree name. */
-  degree: "[DEGREE NAME]",
-  period: "2023–2027",
-} as const;
+export const PROFILE: Profile = {
+  name: 'Cristhian Cruz Delgado',
+  university: 'Universidad de La Laguna',
+  degree: "Bachelor's Degree in Computer Engineering",
+  period: '2023–2027',
+};

@@ -1,0 +1,66 @@
+/* Subject view: the full description and the list of projects. */
+.subject {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 4vh, 48px);
+  max-width: 72ch;
+}
+
+.subject-desc {
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  line-height: 1.45;
+}
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.projects-title {
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--fg);
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  font-weight: 700;
+}
+
+.projects-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: clamp(18px, 2vw, 26px);
+  border: 2px solid var(--fg);
+}
+
+.project-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.project-summary {
+  line-height: 1.45;
+}
+
+.project-link {
+  justify-self: start;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .subject-card,
+  .layer-close {
+    transition: none;
+  }
+}

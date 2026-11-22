@@ -29,21 +29,16 @@ Viewed on a desktop browser window, usually 1280×720 to 2560×1440. Content is 
 ## Capabilities and Constraints
 
 - Four academic years, each with two semesters. Subjects are 6 credits each and carry no credit field.
-- Subject descriptions are two lines at most and are written by the author. Until then they read `[DESCRIPTION PENDING]`.
+- Subject descriptions are two lines at most and are written by the author.
 - Projects have a title, a short summary, and a link to GitHub or a file in `assets/projects/`.
 - Routing is hash-based so deep links and the browser back button work on GitHub Pages.
-- Undecided facts: the degree name (`[DEGREE NAME]`), the subject list for every semester except the example, and all project entries.
 
 ## Brand Commitments
 
 - Universidad de La Laguna visual identity: only two colours, `--ull-purple: #5C068C` and `--ull-white: #FFFFFF`. Text is purple on white or white on purple.
 - Typeface: Argentum Sans, loaded from `assets/fonts/` as WOFF2. A generic sans-serif fallback is used when it is missing.
-- Logo: only the official horizontal mark from `assets/brand/`, shown once in the header. Not yet supplied.
+- Logo: only the official horizontal mark from `assets/brand/`, shown once in the header.
 - "ULL" never appears as part of a brand or mark. The name is written as "Universidad de La Laguna".
-
-## Evidence on Hand
-
-No subject list, project list, or degree name has been supplied. The example subject is labelled `EXAMPLE`. Future work must not fabricate subjects, projects, or links.
 
 ## Product Principles
 

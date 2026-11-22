@@ -1,28 +1,44 @@
-/**
- * Argentum Sans, the official typeface, loaded from `assets/fonts/`.
- * The file names are a convention: add the WOFF2 files under these names.
- * If a file is missing, the request fails quietly and the CSS fallback stack applies.
- */
-const FACES: ReadonlyArray<{ weight: string; file: string }> = [
-  { weight: "400", file: "ArgentumSans-Regular.woff2" },
-  { weight: "700", file: "ArgentumSans-Bold.woff2" },
+import { FONT_FILES_PATH } from './paths';
+
+/** Family name used in the stylesheet. */
+const ARGENTUM_FAMILY = 'Argentum Sans';
+
+/** One weight of the typeface and the file that holds it. */
+interface FontFaceSource {
+  /** CSS font weight of the file. */
+  readonly weight: string;
+  /** File name inside `assets/fonts/`. */
+  readonly fileName: string;
+}
+
+const ARGENTUM_FACES: readonly FontFaceSource[] = [
+  { weight: '400', fileName: 'ArgentumSans-Regular.woff2' },
+  { weight: '700', fileName: 'ArgentumSans-Bold.woff2' },
 ];
 
-export function loadFonts(): void {
-  if (typeof FontFace === "undefined") return;
+/**
+ * Loads Argentum Sans from `assets/fonts/`. A missing file is reported in the
+ * console, and the stylesheet's fallback font stays in use.
+ */
+export function loadArgentumSans(): void {
+  if (typeof FontFace === 'undefined') {
+    console.warn('FontFace is unsupported; the fallback font is used.');
+    return;
+  }
+  ARGENTUM_FACES.forEach((face) => {
+    void loadFace(face);
+  });
+}
 
-  for (const face of FACES) {
-    try {
-      const font = new FontFace("Argentum Sans", `url("./assets/fonts/${face.file}") format("woff2")`, {
-        weight: face.weight,
-        display: "swap",
-      });
-      font
-        .load()
-        .then((loaded) => document.fonts.add(loaded))
-        .catch(() => undefined);
-    } catch {
-      // Constructing the face can fail on unusual browsers; the fallback stack still applies.
-    }
+async function loadFace(face: FontFaceSource): Promise<void> {
+  const source = `url("${FONT_FILES_PATH}${face.fileName}") format("woff2")`;
+  try {
+    const font = new FontFace(ARGENTUM_FAMILY, source, {
+      weight: face.weight,
+      display: 'swap',
+    });
+    document.fonts.add(await font.load());
+  } catch (error: unknown) {
+    console.warn(`Could not load ${face.fileName}; using the fallback.`, error);
   }
 }

@@ -1,0 +1,82 @@
+/* Academic year view: two full-height semester columns. */
+.semesters {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 32px);
+}
+
+.semester {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 2px solid var(--ull-purple);
+}
+
+.semester-head {
+  flex: none;
+  padding: clamp(12px, 1.4vh, 18px) clamp(16px, 1.6vw, 24px);
+  background: var(--ull-purple);
+  color: var(--ull-white);
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  font-weight: 700;
+}
+
+.semester-list {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: clamp(12px, 1.6vh, 20px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.subject-card {
+  display: grid;
+  gap: 8px;
+  padding: clamp(16px, 1.8vh, 22px) clamp(16px, 1.6vw, 24px);
+  border: 2px solid var(--ull-purple);
+  background: var(--ull-white);
+  color: var(--ull-purple);
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.subject-card:hover {
+  background: var(--ull-purple);
+  color: var(--ull-white);
+}
+
+.subject-card-name {
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.subject-card-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+
+.placeholder {
+  padding: 16px 18px;
+  border: 2px dashed currentColor;
+  font-size: 0.98rem;
+}
+
+@media (max-width: 900px) {
+  .semesters {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: minmax(0, 1fr);
+  }
+}

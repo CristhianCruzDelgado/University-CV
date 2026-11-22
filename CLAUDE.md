@@ -7,7 +7,7 @@
 
 ## Project
 
-An online academic CV for Cristhian Cruz Delgado, student at the Universidad de La Laguna (ULL), [DEGREE NAME], 2023–2027.
+An online academic CV for Cristhian Cruz Delgado, student at the Universidad de La Laguna (ULL), Bachelor's Degree in Computer Engineering (Grado en Ingeniería Informática), 2023–2027.
 
 - Visual, simple, and striking. Presentation is the priority.
 - The reveal transition is the signature feature. It must feel polished and deliberate. A plain list is not acceptable.
@@ -24,6 +24,43 @@ An online academic CV for Cristhian Cruz Delgado, student at the Universidad de 
 - Scripts: `npm run dev`, `npm run build`, `npm run typecheck`.
 - Use no animation libraries. Animations use the browser's own APIs.
 - Commit both `src/` and the built `docs/`.
+
+## Code style
+
+### Principles
+
+- Follow the Google TypeScript Style Guide for TypeScript, and the Google HTML/CSS Style Guide for markup and styles.
+- Follow the principles of *Clean Code* (Robert C. Martin):
+  - Names reveal intent. Prefer a longer, precise name to a short, vague one.
+  - Functions do one thing, at one level of abstraction. Keep them short, and avoid more than three parameters. Avoid boolean flag parameters: split the function instead.
+  - No magic numbers or strings. Give them named constants.
+  - No duplication. Extract shared logic once it appears a second time.
+  - Comments explain *why*, not *what*. If a comment is needed to explain *what* code does, rename or restructure the code instead.
+  - No dead code, commented-out code, or unused exports.
+  - Handle errors explicitly. Do not swallow exceptions silently.
+  - Keep modules focused. Separate rendering, routing, state, animation, and content into distinct modules.
+- Prefer clarity over cleverness.
+
+### TypeScript (Google style, enforced by ESLint and Prettier)
+
+- Indentation: 2 spaces. Maximum line length: 80 characters.
+- Strings: single quotes. Always end statements with semicolons.
+- Use `const` by default and `let` only when reassignment is needed. Never use `var`.
+- Never use `any`. Use `unknown` and narrow it, or define a proper type.
+- Use named exports. Do not use default exports.
+- Naming: `camelCase` for variables, functions, and methods; `PascalCase` for types, interfaces, and classes; `UPPER_SNAKE_CASE` for true constants.
+- Use `interface` for object shapes and `type` for unions and aliases.
+- Add a JSDoc comment to every exported function, type, and interface.
+- Prefer explicit return types on exported functions.
+- Use the strict compiler options. Do not disable a rule or type check without a written reason in a comment.
+
+### HTML and CSS (Google style)
+
+- Lowercase element and attribute names. Double quotes in attributes. Two-space indentation.
+- Use semantic elements (`header`, `main`, `nav`, `section`, `button`, `a`) before adding `div` and `span`.
+- Put all `<script>` tags in `<head>`, with `type="module"` and a relative `src`. Do not place scripts at the end of `<body>`.
+- Do not use inline scripts or inline styles.
+- Use class names in lowercase kebab-case, and organize CSS by component.
 
 ## Brand rules (Universidad de La Laguna)
 
@@ -45,8 +82,8 @@ These rules come from the institution's visual identity summary, which the autho
 
 ## Design principles
 
-- Follow the Impeccable skill for all visual and motion craft decisions, including composition, spacing, hierarchy, and timing. The rules in this file cover brand and behavior only.
-- If a rule here seems to conflict with Impeccable, follow Impeccable on craft and keep the brand and behavior rules. Then flag the conflict to the author.
+- Follow the Impeccable skill for all visual and motion craft decisions, including composition, spacing, hierarchy, and timing. The rules in this file cover brand, code, and behavior only.
+- If a rule here seems to conflict with Impeccable, follow Impeccable on craft and keep the brand, code, and behavior rules. Then flag the conflict to the author.
 
 ## Layout and viewport
 
@@ -80,9 +117,8 @@ These rules come from the institution's visual identity summary, which the autho
      - Short summary.
      - Link to a GitHub repository, or a file in `assets/projects/`.
    - If a subject has no projects, show a short placeholder line rather than leaving the space empty.
-
 Breadcrumbs show the current path, for example: Home › 1st Year › First Semester › Subject name.
-
+ 
 ## Transitions (the signature feature)
 
 - Each button opens its target by expanding from its own on-screen position, and closing returns the view to that same position.
@@ -110,10 +146,31 @@ Breadcrumbs show the current path, for example: Home › 1st Year › First Seme
 - Suggested schema:
 
 ```ts
-type Project = { title: string; summary: string; link?: string; file?: string };
-type Subject = { id: string; name: string; description: string; projects: Project[] };
-type Semester = { id: string; name: string; subjects: Subject[] };
-type AcademicYear = { id: string; label: string; semesters: Semester[] };
+export interface Project {
+  readonly title: string;
+  readonly summary: string;
+  readonly link?: string;
+  readonly file?: string;
+}
+
+export interface Subject {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly projects: readonly Project[];
+}
+
+export interface Semester {
+  readonly id: string;
+  readonly name: string;
+  readonly subjects: readonly Subject[];
+}
+
+export interface AcademicYear {
+  readonly id: string;
+  readonly label: string;
+  readonly semesters: readonly Semester[];
+}
 ```
 
 - The author writes all subject descriptions and project entries after the site is built.
@@ -130,7 +187,7 @@ type AcademicYear = { id: string; label: string; semesters: Semester[] };
 ## Working rules for Claude
 
 - Read the Impeccable skill before designing or changing any visual element.
-- After each change, run `npm run typecheck` and `npm run build`.
+- After each change, run `npm run check`. Fix every error and warning before reporting back.
 - Verify the desktop behavior: no page-level scroll, transitions, Escape and back navigation, and deep links.
 - Do not commit or push unless the author asks.
 - Ask before changing brand rules, information architecture, or content.
@@ -138,5 +195,8 @@ type AcademicYear = { id: string; label: string; semesters: Semester[] };
 
 ## Deployment
 
-- GitHub Pages serves the `docs/` folder from the `main` branch.
-- The README (in English) explains how to edit content, build, and publish.
+- GitHub Pages serves the `docs/` folder from the `main` branch. In the repository settings, set the Pages source to "Deploy from a branch", branch `main`, folder `/docs`.
+- `docs/` must contain a `.nojekyll` file. This tells GitHub Pages to serve the built files as they are, without running Jekyll. Without it, Pages tries to process the site with Jekyll and can fail.
+- `docs/` must be committed. Run `npm run build` before each push so the published files are current.
+- Keep the `CNAME` file in `docs/` if a custom domain is ever added. Vite empties `docs/` on build, so `CNAME` and `.nojekyll` must live in `public/` to survive the build.
+- The README (in English) explains how to edit content, build, and publish, and includes a troubleshooting section for these deployment issues.

@@ -1,270 +1,170 @@
+import { findYear, locateSubject } from '../content/lookup';
+import { LayerStack } from './layers/layer-stack';
+import { isReachable, keepFocusWithin } from './focus';
 import {
-  ancestorsOf,
-  findYear,
-  HOME,
-  parentOf,
+  onHistoryChange,
+  currentHash,
+  pushEntry,
+  readParentHash,
+  replaceEntry,
+  seedEntries,
+  stepBack,
+} from './routing/history';
+import {
+  ancestorRoutes,
+  HOME_ROUTE,
+  parentRoute,
   parseHash,
   routeToHash,
+  visibleLevels,
+  type LayeredRoute,
   type Route,
-} from "./route";
-import { collapse, expand, hideContent, reveal } from "./motion";
-import {
-  buildCrumbs,
-  buildHome,
-  buildSubjectView,
-  buildYearView,
-  type LayerView,
-  type Open,
-} from "./views";
+} from './routing/route';
+import { createElement } from './views/dom';
+import { buildHomeView } from './views/home-view';
+import { buildLayerFrame, type LayerFrame } from './views/layer-frame';
+import { buildSubjectContent } from './views/subject-view';
+import type { LayerContent, OpenRoute } from './views/view-types';
+import { buildYearContent } from './views/year-view';
 
-/** One open expanded view. Layers stack: a year sits over home, a subject over its year. */
-type Layer = {
-  key: string;
-  route: Route;
-  /** Full-window container: carries the background and the clip-path animation. */
-  el: HTMLElement;
-  /** Padded content column: fades out before the container collapses. */
-  inner: HTMLElement;
-  /** Scroll container for the view's content. */
-  body: HTMLElement;
-  /** The element that opened this layer; focus returns to it on close. */
-  opener: Element | null;
-};
-
-let host: HTMLElement;
-let home: HTMLElement;
-let layersHost: HTMLElement;
-let layers: Layer[] = [];
-let currentRoute: Route = HOME;
-let currentKey = "";
-let titleCounter = 0;
-
-/** Remembers each layer's scroll position so reopening restores it. */
-const scrollMemo = new Map<string, number>();
-
-const open: Open = (route, origin) => navigate(route, origin);
+const ESCAPE_KEY = 'Escape';
+const FIRST_TILE_SELECTOR = '.tile';
+const LAYER_TITLE_SELECTOR = '.layer-title';
 
 /**
- * Mounts the app. Deep links are expanded into their full chain of history
- * entries, so the browser back button climbs one level at a time and never
- * leaves the site while a parent level exists.
+ * Mounts the site into the root element and wires navigation to the screen.
+ * @param root Element that holds the whole application.
  */
 export function startApp(root: HTMLElement): void {
-  host = root;
-  host.replaceChildren();
-
-  home = buildHome(open);
-  layersHost = document.createElement("div");
-  layersHost.className = "layers";
-  host.append(home, layersHost);
-
-  document.addEventListener("keydown", onKeydown);
-  window.addEventListener("popstate", () => sync(parseHash(location.hash), null));
-
-  boot();
+  const app = new App(root);
+  app.start();
 }
 
-function boot(): void {
-  const target = parseHash(location.hash);
-  const chain = [...ancestorsOf(target), target];
-  const first = chain[0] ?? HOME;
+/**
+ * Owns the current route and keeps the home screen, the layer stack, the
+ * browser history and focus in step with it.
+ */
+class App {
+  private readonly home: HTMLElement;
+  private readonly stack: LayerStack;
+  private currentRoute: Route = HOME_ROUTE;
+  private readonly openRoute: OpenRoute = (route, origin) => {
+    this.navigate(route, origin);
+  };
 
-  history.replaceState({ up: null }, "", routeToHash(first));
-  for (let index = 1; index < chain.length; index++) {
-    const previous = chain[index - 1] ?? HOME;
-    const current = chain[index] ?? HOME;
-    history.pushState({ up: routeToHash(previous) }, "", routeToHash(current));
+  /** @param root Element that holds the whole application. */
+  constructor(root: HTMLElement) {
+    this.home = buildHomeView(this.openRoute);
+    const layersHost = createElement('div', { className: 'layers' });
+    this.stack = new LayerStack(layersHost, (route) => this.createFrame(route));
+    root.append(this.home, layersHost);
   }
 
-  sync(target, null);
-}
+  /** Shows the route in the address bar and wires the global listeners. */
+  start(): void {
+    const target = parseHash(currentHash());
+    seedEntries(ancestorRoutes(target).concat(target).map(routeToHash));
 
-/** Opens a route from a user action. `origin` is the element that expands. */
-function navigate(route: Route, origin: Element | null): void {
-  const hash = routeToHash(route);
-  if (hash === routeToHash(currentRoute)) return;
-  history.pushState({ up: routeToHash(currentRoute) }, "", hash);
-  sync(route, origin);
-}
-
-/** Moves up one level: a history step when the parent is the previous entry, otherwise a replace. */
-function goUp(): void {
-  const parent = parentOf(currentRoute);
-  if (!parent) return;
-  const parentHash = routeToHash(parent);
-  if (readUp() === parentHash) {
-    history.back();
-    return;
-  }
-  history.replaceState({ up: null }, "", parentHash);
-  sync(parent, null);
-}
-
-function readUp(): string | null {
-  const state: unknown = history.state;
-  if (state !== null && typeof state === "object" && "up" in state) {
-    const up = (state as { up: unknown }).up;
-    return typeof up === "string" ? up : null;
-  }
-  return null;
-}
-
-/** Applies a route to the screen. Duplicate routes are ignored. */
-function sync(route: Route, origin: Element | null): void {
-  const key = routeToHash(route);
-  if (key === currentKey) return;
-  currentKey = key;
-  currentRoute = route;
-  render(route, origin);
-}
-
-function render(route: Route, origin: Element | null): void {
-  const levels = [...ancestorsOf(route), route].filter((level) => level.kind !== "home");
-
-  let common = 0;
-  while (
-    common < layers.length &&
-    common < levels.length &&
-    layers[common]?.key === routeToHash(levels[common] ?? HOME)
-  ) {
-    common++;
+    onHistoryChange(() => {
+      this.syncWithLocation();
+    });
+    document.addEventListener('keydown', (event) => {
+      this.handleKeydown(event);
+    });
+    this.show(target, undefined);
   }
 
-  const closing = layers.splice(common);
-  for (const layer of closing) closeLayer(layer);
-
-  for (let index = common; index < levels.length; index++) {
-    const level = levels[index] ?? HOME;
-    openLayer(level, index === common ? origin : null);
+  private navigate(route: Route, origin: Element): void {
+    const hash = routeToHash(route);
+    const currentHashValue = routeToHash(this.currentRoute);
+    if (hash === currentHashValue) return;
+    pushEntry(hash, currentHashValue);
+    this.show(route, origin);
   }
 
-  updateInert();
+  /** Moves up one level. Uses the back button when it leads to the parent. */
+  private goUp(): void {
+    const parent = parentRoute(this.currentRoute);
+    if (parent === undefined) return;
 
-  const returnTo = closing[0]?.opener ?? null;
-  if (returnTo instanceof HTMLElement && isReachable(returnTo)) {
-    returnTo.focus({ preventScroll: true });
-  } else {
-    focusTop();
-  }
-}
-
-function viewFor(route: Route): LayerView | null {
-  switch (route.kind) {
-    case "home":
-      return null;
-    case "year": {
-      const year = findYear(route.year);
-      return year ? buildYearView(year, open) : null;
+    const parentHash = routeToHash(parent);
+    if (readParentHash() === parentHash) {
+      stepBack();
+      return;
     }
-    case "subject":
-      return buildSubjectView(route);
+    replaceEntry(parentHash, null);
+    this.show(parent, undefined);
   }
-}
 
-function openLayer(route: Route, opener: Element | null): void {
-  const view = viewFor(route);
-  if (!view) return;
-
-  const key = routeToHash(route);
-  const titleId = `layer-title-${++titleCounter}`;
-
-  const el = document.createElement("section");
-  el.className = `layer layer--${route.kind}`;
-  el.setAttribute("role", "dialog");
-  el.setAttribute("aria-modal", "true");
-  el.setAttribute("aria-labelledby", titleId);
-
-  const inner = document.createElement("div");
-  inner.className = "layer__inner";
-
-  const top = document.createElement("div");
-  top.className = "layer__top";
-  top.dataset["reveal"] = "";
-  const close = document.createElement("button");
-  close.type = "button";
-  close.className = "layer__close";
-  close.textContent = "Close";
-  close.addEventListener("click", goUp);
-  top.append(buildCrumbs(view.crumbs), close);
-
-  const title = document.createElement("h2");
-  title.className = "layer__title";
-  title.id = titleId;
-  title.tabIndex = -1;
-  title.textContent = view.title;
-  title.dataset["reveal"] = "";
-
-  inner.append(top, title, view.body);
-  el.append(inner);
-  layersHost.append(el);
-
-  const layer: Layer = { key, route, el, inner, body: view.body, opener };
-  layers.push(layer);
-
-  view.body.scrollTop = scrollMemo.get(key) ?? 0;
-  expand(el, opener);
-  reveal(inner);
-}
-
-function closeLayer(layer: Layer): void {
-  scrollMemo.set(layer.key, layer.body.scrollTop);
-  layer.el.inert = true;
-  hideContent(layer.inner);
-  const animation = collapse(layer.el, layer.opener);
-  animation.finished.catch(() => undefined).then(() => layer.el.remove());
-}
-
-/** Only the top layer is interactive. Home and the layers under it are inert while any layer is open. */
-function updateInert(): void {
-  home.inert = layers.length > 0;
-  layers.forEach((layer, index) => {
-    layer.el.inert = index !== layers.length - 1;
-  });
-}
-
-function isReachable(node: Element): boolean {
-  return node.isConnected && node.closest("[inert]") === null;
-}
-
-function focusTop(): void {
-  const top = layers[layers.length - 1];
-  if (top) {
-    top.el.querySelector<HTMLElement>(".layer__title")?.focus({ preventScroll: true });
-    return;
+  private syncWithLocation(): void {
+    this.show(parseHash(currentHash()), undefined);
   }
-  home.querySelector<HTMLElement>(".tile")?.focus({ preventScroll: true });
-}
 
-function onKeydown(event: KeyboardEvent): void {
-  if (layers.length === 0) return;
-  if (event.key === "Escape") {
-    event.preventDefault();
-    goUp();
-    return;
+  private show(route: Route, origin: Element | undefined): void {
+    if (routeToHash(route) === routeToHash(this.currentRoute)) return;
+    this.currentRoute = route;
+
+    const closedOpener = this.stack.reconcile(visibleLevels(route), origin);
+    this.home.inert = !this.stack.isEmpty();
+    this.focusTargetFor(closedOpener)?.focus({ preventScroll: true });
   }
-  if (event.key === "Tab") keepFocusInTopLayer(event);
-}
 
-/** Keeps Tab and Shift+Tab inside the open dialog, since the layers below are inert. */
-function keepFocusInTopLayer(event: KeyboardEvent): void {
-  const top = layers[layers.length - 1];
-  if (!top) return;
-  const focusables = [
-    ...top.el.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    ),
-  ];
-  const first = focusables[0];
-  const last = focusables[focusables.length - 1];
-  if (!first || !last) return;
+  /**
+   * Chooses where focus goes after a change. It returns to the element that
+   * opened a closed layer, otherwise into the top layer, otherwise to home.
+   * @param closedOpener Element that opened the layer that just closed.
+   * @returns The element to focus, if one exists.
+   */
+  private focusTargetFor(
+    closedOpener: Element | undefined,
+  ): HTMLElement | undefined {
+    if (closedOpener instanceof HTMLElement && isReachable(closedOpener)) {
+      return closedOpener;
+    }
+    const top = this.stack.topElement();
+    if (top !== undefined) {
+      return top.querySelector<HTMLElement>(LAYER_TITLE_SELECTOR) ?? undefined;
+    }
+    return (
+      this.home.querySelector<HTMLElement>(FIRST_TILE_SELECTOR) ?? undefined
+    );
+  }
 
-  const active = document.activeElement;
-  const inside = active !== null && top.el.contains(active);
-  if (event.shiftKey && (!inside || active === first)) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && (!inside || active === last)) {
-    event.preventDefault();
-    first.focus();
+  private createFrame(route: LayeredRoute): LayerFrame {
+    return buildLayerFrame(route.kind, this.contentFor(route), () => {
+      this.goUp();
+    });
+  }
+
+  private contentFor(route: LayeredRoute): LayerContent {
+    if (route.kind === 'year') {
+      const year = findYear(route.yearId);
+      if (year === undefined) {
+        throw new Error(`Unknown academic year: ${route.yearId}`);
+      }
+      return buildYearContent(year, this.openRoute);
+    }
+
+    const location = locateSubject(
+      route.yearId,
+      route.semesterId,
+      route.subjectId,
+    );
+    if (location === undefined) {
+      throw new Error(`Unknown subject: ${route.subjectId}`);
+    }
+    return buildSubjectContent(location);
+  }
+
+  private handleKeydown(event: KeyboardEvent): void {
+    if (this.stack.isEmpty()) return;
+
+    if (event.key === ESCAPE_KEY) {
+      event.preventDefault();
+      this.goUp();
+      return;
+    }
+    const top = this.stack.topElement();
+    if (top !== undefined) keepFocusWithin(event, top);
   }
 }

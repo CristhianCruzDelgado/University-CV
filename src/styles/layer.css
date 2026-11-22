@@ -1,0 +1,98 @@
+/* Expanded views: the full-window layers, their header and breadcrumbs. */
+
+.layer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  will-change: clip-path, transform;
+}
+
+.layer-year {
+  --bg: var(--ull-white);
+  --fg: var(--ull-purple);
+  scrollbar-color: var(--ull-purple) var(--ull-white);
+}
+
+.layer-subject {
+  --bg: var(--ull-purple);
+  --fg: var(--ull-white);
+  scrollbar-color: var(--ull-white) var(--ull-purple);
+}
+
+.layer-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 28px);
+  padding: var(--space-vertical) var(--space-page);
+}
+
+.layer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.layer-close {
+  flex: none;
+  padding: 0.55em 1.1em;
+  border: 2px solid var(--fg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.layer-close:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.layer-title {
+  font-size: clamp(2rem, 4.2vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.layer-title:focus {
+  outline: none;
+}
+
+.layer-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.crumbs-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em 0.6em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+.crumbs-link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.crumbs-item[aria-current='page'] {
+  font-weight: 700;
+}
