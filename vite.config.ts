@@ -5,7 +5,7 @@ import { defineConfig, type Plugin } from 'vite';
 /** Build output folder. GitHub Pages serves it from the main branch. */
 const OUTPUT_DIRECTORY = 'docs';
 
-/** Folder with brand, font and project files, copied into the build. */
+/** Folder with project files, copied into the build. */
 const ASSETS_DIRECTORY = 'assets';
 
 /** Folder whose files are copied to the site root, such as `.nojekyll`. */

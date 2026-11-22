@@ -70,14 +70,6 @@ These rules come from the institution's visual identity summary, which the autho
   - `--ull-purple: #5C068C`
   - `--ull-white: #FFFFFF`
   - Text is purple on white or white on purple. No other text colors. Do not add other hues.
-- **Typeface:** Argentum Sans is the official typeface. Load it from `assets/fonts/` as WOFF2 files. Use a generic sans-serif fallback only if the font fails to load. Do not use Montserrat, which the manual allows only in Google Docs.
-- **Logo:**
-  - Use only the official mark from the university's visual identity repository, stored in `assets/brand/`.
-  - Prefer the horizontal format.
-  - Do not redraw, distort, rotate, add effects, or change the mark's typography.
-  - Show only one university mark on the site, in the header.
-  - Do not use the traditional San Fernando coat of arms.
-  - Do not use the Centenary commemorative mark.
 - **Acronym:** "ULL" may appear in plain text and URLs, but never as part of a brand or mark. Write "Universidad de La Laguna" in full wherever a name is needed.
 
 ## Design principles
@@ -94,7 +86,7 @@ These rules come from the institution's visual identity summary, which the autho
 ## Information architecture
 
 1. **Home (`#/`)**
-   - The author's name and the university mark in the header.
+   - The author's name and a link to the Universidad de La Laguna website in the header.
    - Four large buttons, one per academic year:
      - 1st Year (2023–2024)
      - 2nd Year (2024–2025)
@@ -180,8 +172,6 @@ export interface AcademicYear {
 
 ## Assets
 
-- `assets/brand/`: the official university logo files.
-- `assets/fonts/`: Argentum Sans WOFF2 files.
 - `assets/projects/`: files referenced by projects, such as PDFs.
 
 ## Working rules for Claude

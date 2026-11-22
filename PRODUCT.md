@@ -36,8 +36,6 @@ Viewed on a desktop browser window, usually 1280×720 to 2560×1440. Content is 
 ## Brand Commitments
 
 - Universidad de La Laguna visual identity: only two colours, `--ull-purple: #5C068C` and `--ull-white: #FFFFFF`. Text is purple on white or white on purple.
-- Typeface: Argentum Sans, loaded from `assets/fonts/` as WOFF2. A generic sans-serif fallback is used when it is missing.
-- Logo: only the official horizontal mark from `assets/brand/`, shown once in the header.
 - "ULL" never appears as part of a brand or mark. The name is written as "Universidad de La Laguna".
 
 ## Product Principles

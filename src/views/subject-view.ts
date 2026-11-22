@@ -3,8 +3,11 @@ import type { Project, Subject } from '../../content/types';
 import { PROJECT_FILES_PATH } from '../paths';
 import { UI_TEXT } from '../text';
 import { homeCrumb, yearCrumb } from './breadcrumbs';
-import { createElement } from './dom';
+import { createElement, createExternalLink } from './dom';
 import type { LayerContent } from './view-types';
+
+/** Class name of the link under each project. */
+const PROJECT_LINK_CLASS = 'project-link';
 
 /**
  * Builds the content of a subject: its description and its projects.
@@ -86,34 +89,15 @@ function buildProjectItem(project: Project): HTMLLIElement {
  */
 function buildProjectLink(project: Project): HTMLAnchorElement | undefined {
   if (project.link !== undefined) {
-    return createProjectAnchor(
+    return createExternalLink(
       UI_TEXT.openLink,
       project.link,
-      'noopener noreferrer',
+      PROJECT_LINK_CLASS,
     );
   }
   if (project.file !== undefined) {
     const href = `${PROJECT_FILES_PATH}${encodeURIComponent(project.file)}`;
-    return createProjectAnchor(UI_TEXT.openFile, href, 'noopener');
+    return createExternalLink(UI_TEXT.openFile, href, PROJECT_LINK_CLASS);
   }
   return undefined;
-}
-
-/**
- * Creates a link that opens in a new tab.
- * @param text Visible text of the link.
- * @param href Target of the link.
- * @param rel Security relations for the new tab.
- * @returns The anchor element.
- */
-function createProjectAnchor(
-  text: string,
-  href: string,
-  rel: string,
-): HTMLAnchorElement {
-  const anchor = createElement('a', { className: 'project-link', text });
-  anchor.href = href;
-  anchor.target = '_blank';
-  anchor.rel = rel;
-  return anchor;
 }

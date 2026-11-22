@@ -2,7 +2,7 @@ import { PROFILE } from '../../content/profile';
 import type { AcademicYear } from '../../content/types';
 import { ACADEMIC_YEARS } from '../../content/years';
 import { UI_TEXT } from '../text';
-import { createElement } from './dom';
+import { createElement, createExternalLink } from './dom';
 import type { OpenRoute } from './view-types';
 
 /** Splits a label such as "1st Year (2023–2024)" into name and period. */
@@ -23,10 +23,11 @@ function buildHomeHeader(): HTMLElement {
   const header = createElement('header', { className: 'home-header' });
   const meta = `${PROFILE.degree}${UI_TEXT.metaSeparator}${PROFILE.period}`;
   header.append(
-    createElement('p', {
-      className: 'home-university',
-      text: PROFILE.university,
-    }),
+    createExternalLink(
+      PROFILE.university,
+      PROFILE.universityUrl,
+      'home-university',
+    ),
     createElement('h1', { className: 'home-name', text: PROFILE.name }),
     createElement('p', { className: 'home-meta', text: meta }),
   );

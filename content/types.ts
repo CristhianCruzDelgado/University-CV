@@ -48,6 +48,8 @@ export interface Profile {
   readonly name: string;
   /** Name of the university, written in full. */
   readonly university: string;
+  /** Official website of the university, opened from the home header. */
+  readonly universityUrl: string;
   /** Degree the author is studying. */
   readonly degree: string;
   /** Years covered by the degree, for example "2023–2027". */

@@ -4,6 +4,7 @@ import type { Profile } from './types';
 export const PROFILE: Profile = {
   name: 'Cristhian Cruz Delgado',
   university: 'Universidad de La Laguna',
-  degree: "Bachelor's Degree in Computer Engineering",
+  universityUrl: 'https://www.ull.es/',
+  degree: "Bachelor's Degree in Computer Science",
   period: '2023–2027',
 };

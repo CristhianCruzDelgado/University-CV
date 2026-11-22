@@ -2,7 +2,7 @@
   "name": "university-cv",
   "version": "1.0.0",
   "private": true,
-  "description": "Online academic CV of Cristhian Cruz Delgado, Universidad de La Laguna, 2023–2027.",
+  "description": "Online academic CV of Cristhian Cruz Delgado, Universidad de La Laguna, 2023-2027.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CristhianCruzDelgado/University-CV.git"
+    "url": "https://github.com/CristhianCruzDelgado/University-CV.git"
   },
   "license": "MIT",
   "devDependencies": {
