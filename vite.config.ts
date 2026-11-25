@@ -1,6 +1,7 @@
 import { cpSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
+import { validateProjectResources } from './tools/validate-resources.ts';
 
 /** Build output folder. GitHub Pages serves it from the main branch. */
 const OUTPUT_DIRECTORY = 'docs';
@@ -38,7 +39,7 @@ function copyAssets(): Plugin {
 export default defineConfig({
   base: './',
   publicDir: PUBLIC_DIRECTORY,
-  plugins: [copyAssets()],
+  plugins: [validateProjectResources(import.meta.dirname), copyAssets()],
   build: {
     outDir: OUTPUT_DIRECTORY,
     emptyOutDir: true,

@@ -1,0 +1,3 @@
+/home/usuario/PRACTICAS/ib-2024-2025-p10-string-array-vector-CRIS000CRUZ/P4_max_min_avg/build/CMakeFiles/Max_min_avg.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p10-string-array-vector-CRIS000CRUZ/P4_max_min_avg/build/CMakeFiles/edit_cache.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p10-string-array-vector-CRIS000CRUZ/P4_max_min_avg/build/CMakeFiles/rebuild_cache.dir

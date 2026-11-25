@@ -8,7 +8,8 @@ export const UI_TEXT = {
   subjectsPending: '[SUBJECTS PENDING]',
   projectsPending: '[PROJECTS PENDING]',
   openLink: 'Open link',
-  openFile: 'Open file',
+  fileResource: 'File: ',
+  directoryResource: 'Folder: ',
   metaSeparator: ' · ',
   crumbSeparator: '›',
 } as const;

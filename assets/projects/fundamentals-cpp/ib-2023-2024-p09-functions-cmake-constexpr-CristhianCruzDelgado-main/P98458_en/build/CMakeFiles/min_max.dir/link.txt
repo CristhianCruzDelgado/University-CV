@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/min_max.dir/src/min_max.cc.o CMakeFiles/min_max.dir/src/min_max_main.cc.o -o min_max 

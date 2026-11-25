@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/change_case.dir/src/conversor.cc.o CMakeFiles/change_case.dir/src/change_case.cc.o -o change_case 

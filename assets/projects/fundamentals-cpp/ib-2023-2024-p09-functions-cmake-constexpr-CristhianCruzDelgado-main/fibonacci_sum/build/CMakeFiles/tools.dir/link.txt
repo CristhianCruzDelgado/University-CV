@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/lib/libtools.a CMakeFiles/tools.dir/src/tools.cc.o
+/usr/bin/ranlib /home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/lib/libtools.a

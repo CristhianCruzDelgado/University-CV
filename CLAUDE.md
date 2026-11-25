@@ -107,7 +107,7 @@ These rules come from the institution's visual identity summary, which the autho
    - A list of the author's projects for that subject. Each project shows:
      - Title.
      - Short summary.
-     - Link to a GitHub repository, or a file in `assets/projects/`.
+     - An external link, and any number of files and folders of this repository. Files and folders open on GitHub and are visually distinguished from each other.
    - If a subject has no projects, show a short placeholder line rather than leaving the space empty.
 Breadcrumbs show the current path, for example: Home › 1st Year › First Semester › Subject name.
  
@@ -138,11 +138,17 @@ Breadcrumbs show the current path, for example: Home › 1st Year › First Seme
 - Suggested schema:
 
 ```ts
+export interface ProjectResource {
+  readonly path: string;    // Path relative to the repository root
+  readonly label?: string;  // Visible text; defaults to the file or folder name
+}
+
 export interface Project {
   readonly title: string;
   readonly summary: string;
-  readonly link?: string;
-  readonly file?: string;
+  readonly link?: string;                          // External URL
+  readonly files?: readonly ProjectResource[];
+  readonly directories?: readonly ProjectResource[];
 }
 
 export interface Subject {
@@ -165,6 +171,8 @@ export interface AcademicYear {
 }
 ```
 
+- Files link to `<repository>/blob/main/<path>` and folders to `<repository>/tree/main/<path>`. The repository URL is a single constant, `REPOSITORY_URL` in `src/paths.ts`.
+- `npm run check` fails if a path in `files` or `directories` does not exist in the repository, or if a file path points to a folder or the reverse.
 - The author writes all subject descriptions and project entries after the site is built.
 - Until then, use `"[DESCRIPTION PENDING]"` for descriptions. Show a clear placeholder rather than making up text.
 - Never invent academic content, project names, or links.

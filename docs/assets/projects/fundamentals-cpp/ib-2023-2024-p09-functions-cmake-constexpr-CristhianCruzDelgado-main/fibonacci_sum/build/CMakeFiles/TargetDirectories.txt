@@ -1,0 +1,5 @@
+/home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/build/CMakeFiles/tools.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/build/CMakeFiles/fibonacci_sum.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/build/CMakeFiles/doc.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/build/CMakeFiles/edit_cache.dir
+/home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/build/CMakeFiles/rebuild_cache.dir

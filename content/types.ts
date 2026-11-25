@@ -1,4 +1,12 @@
-/** A project the author produced for a subject. Give a link or a file. */
+/** A file or folder of this repository that a project points to. */
+export interface ProjectResource {
+  /** Path relative to the repository root, for example "assets/report.pdf". */
+  readonly path: string;
+  /** Visible text. When missing, the file or folder name is shown. */
+  readonly label?: string;
+}
+
+/** A project the author produced for a subject. */
 export interface Project {
   /** Short project title. */
   readonly title: string;
@@ -6,8 +14,10 @@ export interface Project {
   readonly summary: string;
   /** External link, for example a GitHub repository. */
   readonly link?: string;
-  /** File name inside `assets/projects/`, for example "report.pdf". */
-  readonly file?: string;
+  /** Files of this repository, opened on GitHub. */
+  readonly files?: readonly ProjectResource[];
+  /** Folders of this repository, opened on GitHub. */
+  readonly directories?: readonly ProjectResource[];
 }
 
 /** A subject taught in one semester, with the projects built for it. */

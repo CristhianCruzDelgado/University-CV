@@ -8,7 +8,8 @@ const MAX_COMPLEXITY = 8;
 const ALLOWED_NUMBERS = [-1, 0, 1, 2];
 
 export default tseslint.config(
-  { ignores: ['docs/', 'node_modules/', 'public/'] },
+  // Subject code in assets/ keeps its own style and is never linted.
+  { ignores: ['assets/', 'docs/', 'node_modules/', 'public/'] },
   {
     files: ['**/*.ts'],
     extends: [

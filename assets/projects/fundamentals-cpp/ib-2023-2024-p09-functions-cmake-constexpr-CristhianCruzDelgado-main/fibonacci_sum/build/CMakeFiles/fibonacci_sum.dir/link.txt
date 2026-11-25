@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/fibonacci_sum.dir/src/fibonacci_sum.cc.o CMakeFiles/fibonacci_sum.dir/src/fibonacci_main.cc.o -o fibonacci_sum  /home/usuario/PRACTICAS/ib-2024-2025-p09-functions-cmake-constexpr-CRIS000CRUZ/fibonacci_sum/lib/libtools.a 

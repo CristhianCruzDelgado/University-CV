@@ -57,6 +57,56 @@
   font-weight: 700;
 }
 
+/* Files and folders of a project. Files show a page, folders a folder and a
+   trailing slash, so the two read apart at a glance. */
+.resources {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--fg);
+  list-style: none;
+}
+
+.resource {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.55em;
+  max-width: 100%;
+  padding: 2px 0;
+  text-decoration: none;
+}
+
+.resource-label {
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.resource:hover .resource-label {
+  text-decoration-thickness: 2px;
+}
+
+.resource-folder .resource-label {
+  font-weight: 700;
+}
+
+.resource-folder .resource-label::after {
+  content: '/';
+}
+
+.icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.2em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tile,
   .subject-card,
